@@ -8,14 +8,15 @@
 /**
  * prompt - Displays a prompt to user.
  */
-void prompt()
+void prompt(void)
 {
 	printf("cisfun$ ");
 }
 
 /**
  * userInput - Gets user command.
- * @icommand: the command.
+ * @command: the command.
+ * @size: size of command.
  */
 void userInput(char *command, size_t size)
 {
@@ -36,7 +37,7 @@ void userInput(char *command, size_t size)
 }
 
 /**
- * executeCommand - execute commands.
+ * execute_Command - execute commands.
  * @command: the command that must be executed.
  */
 void execute_Command(const char *command)
@@ -54,6 +55,7 @@ void execute_Command(const char *command)
 		int arg_count = 0;
 
 		char *token;
+
 		token = strtok((char *)command, " ");
 
 		while (token != NULL)
@@ -71,7 +73,7 @@ void execute_Command(const char *command)
 	else
 	{
 		wait(0);
-	}	
+	}
 }
 
 /**
@@ -95,10 +97,11 @@ void printEnvironment()
 }
 
 /**
- * main - shell .
- * return: Always (0).
+ * main - shell program.
+ *
+ * Return: Always (0).
  */
-int main()
+int main(void)
 {
 	char command[MAX_COMMAND_SIZE];
 
