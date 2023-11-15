@@ -22,4 +22,5 @@ void inputCommand(char *command, size_t size)
 		}
 	}
 	command[strcspn(command, "\n")] = '\0';
+
 }

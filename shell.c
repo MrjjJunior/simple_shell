@@ -4,7 +4,6 @@
 #include "input.c"
 #include "exec.c"
 #include "env-main.c"
-#include "cd.c"
 
 /**
  * main - Shell program.
@@ -21,16 +20,12 @@ int main(void)
 		prompt();
 		inputCommand(command, sizeof(command));
 		printEnvironment(command);
+		
 		if (strcmp(command, "exit") == 0)
 		{
 			break;
 		}
 
-		if (strncmp(command, "cd ", 3) == 0)
-		{
-			const char *path = command +3;
-			change_directory(path);
-		}
 		executeCommand(command);
 		
 	}
