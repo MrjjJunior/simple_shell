@@ -18,20 +18,13 @@ void prompt(void)
  * @command: the command.
  * @size: size of command.
  */
-void userInput(char *command, size_t size)
+void userInput(char *command)
 {
-	if (fgets(command, size, stdin) == NULL)
+	if (fgets(command, MAX_COMMAND_SIZE, stdin) == NULL)
 	{
-		if (feof(stdin))
-		{
-			printf("\n");
-			exit(EXIT_SUCCESS);
-		}
-		else
-		{
-			printf("./shell: ");
-			exit(EXIT_FAILURE);
-		}
+		printf("\n");
+		exit(EXIT_SUCCESS);
+		
 	}
 	command[strcspn(command, "\n")] = '\0';
 }
@@ -108,7 +101,7 @@ int main(void)
 	while (1)
 	{
 		prompt();
-		userInput(command, sizeof(command));
+		userInput(command);
 		printEnvironment(command);
 
 		if (strcmp(command, "exit") == 0)
