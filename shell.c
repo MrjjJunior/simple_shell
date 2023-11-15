@@ -39,33 +39,21 @@ void execute_Command(const char *command)
 
 	if (child_pid == -1)
 	{
-		perror("Error processing fork.\n");
+		perror("fork.\n");
 		exit(EXIT_FAILURE);
 	}
 	else if (child_pid == 0)
 	{
-		char *args[100];
-		int arg_count = 0;
-
-		char *token;
-
-		token = strtok((char *)command, " ");
-
-		while (token != NULL)
+		if (execlp(command, command, NULL) == -1)
 		{
-			args[arg_count++] = token;
-			token = strtok(NULL, " ");
+			perror(command);
+			exit(EXIT_FAILURE);
 		}
-		args[arg_count] = NULL;
-
-		execvp(args[0], args);
-
-		perror("./shell");
-		exit(EXIT_FAILURE);
 	}
 	else
 	{
-		wait(0);
+		int status;
+		waitpid(child_pid, &status, 0);
 	}
 }
 
