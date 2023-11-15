@@ -3,101 +3,73 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/wait.h>
-#define MAX_COMMAND_SIZE 1024
 
-/**
- * prompt - Displays a prompt to user.
- */
-void prompt(void)
+#define MAX_COMMAND_LENGTH 100
+#define MAX_ARGS 10
+
+void display_prompt()
 {
-	printf("cisfun$ ");
+	printf("#cisfun$ ");
 }
 
-/**
- * userInput - Gets user command.
- * @command: the command.
- * @size: size of command.
- */
-void userInput(char *command)
+void read_input(char *command)
 {
-	if (fgets(command, MAX_COMMAND_SIZE, stdin) == NULL)
+	if (fgets(command, MAX_COMMAND_LENGTH, stdin) == NULL)
 	{
+        // Handle Ctrl+D (EOF condition)
 		printf("\n");
-		exit(EXIT_SUCCESS);
-		
+		exit(EXIT_SUCCESS); // Exit gracefully
 	}
-	command[strcspn(command, "\n")] = '\0';
+	command[strcspn(command, "\n")] = '\0'; // Remove newline character
 }
 
-/**
- * execute_Command - execute commands.
- * @command: the command that must be executed.
- */
-void execute_Command(const char *command)
+void execute_command(char *command)
 {
-	pid_t child_pid = fork();
+	char *args[MAX_ARGS]; // Array to store command and its arguments
+	int arg_count = 0;
 
-	if (child_pid == -1)
+	char *token = strtok(command, " "); // Tokenize input based on spaces
+
+	while (token != NULL && arg_count < MAX_ARGS - 1)
 	{
-		perror("fork.\n");
+		args[arg_count++] = token; // Store each token as an argument
+		token = strtok(NULL, " ");
+	}
+	args[arg_count] = NULL; // NULL-terminate the argument list
+
+	pid_t pid = fork();
+	if (pid == -1)
+	{
+		perror("fork");
 		exit(EXIT_FAILURE);
 	}
-	else if (child_pid == 0)
+	else if (pid == 0)
 	{
-		if (execlp(command, command, NULL) == -1)
+        // Child process
+		if (execvp(args[0], args) == -1)
 		{
-			perror(command);
+			perror(args[0]);
 			exit(EXIT_FAILURE);
 		}
 	}
 	else
 	{
-		int status;
-		waitpid(child_pid, &status, 0);
+        // Parent process
+	int status;
+	waitpid(pid, &status, 0); // Wait for child process to finish
 	}
 }
 
-/**
- * printEnvironment - funtion prints environment.
- */
-extern char **environ;
-char command[100];
-
-void printEnvironment()
+int main()
 {
-	if (strcmp(command, "env") == 0)
-	{
-		char *env_var;
-		int i = 0;
-
-		while ((env_var = environ[i++]) != NULL)
-		{
-			printf("%s\n", env_var);
-		}
-	}
-}
-
-/**
- * main - shell program.
- *
- * Return: Always (0).
- */
-int main(void)
-{
-	char command[MAX_COMMAND_SIZE];
+	char command[MAX_COMMAND_LENGTH];
 
 	while (1)
 	{
-		prompt();
-		userInput(command);
-		printEnvironment(command);
-
-		if (strcmp(command, "exit") == 0)
-		{
-			break;
-		}
-
-		execute_Command(command);
+		display_prompt();
+		read_input(command);
+		execute_command(command);
 	}
-	return (0);
+
+	return 0;
 }
