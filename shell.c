@@ -15,70 +15,82 @@ void prompt()
 
 /**
  * userInput - Gets user command.
- * @input: the command.
+ * @icommand: the command.
  */
-void userInput(char *command)
+void userInput(char *command, size_t size)
 {
-	fgets(command, MAX_COMMAND_SIZE, stdin);
-	command[strcspn(command, "\n")] = 0;
+	if (fgets(command, size, stdin) == NULL)
+	{
+		if (feof(stdin))
+		{
+			printf("\n");
+			exit(EXIT_SUCCESS);
+		}
+		else
+		{
+			printf("./shell: ");
+			exit(EXIT_FAILURE);
+		}
+	}
+	command[strcspn(command, "\n")] = '\0';
 }
 
 /**
  * executeCommand - execute commands.
  * @command: the command that must be executed.
  */
-void executeCommand(char *command)
+void execute_Command(const char *command)
 {
-	char *args[MAX_COMMAND_SIZE];
-	int arg_count = 0;
-	char *token = strtok(command, " ");
+	pid_t child_pid = fork();
 
-	if (strcmp(command, "exit") == 0)
+	if (child_pid == -1)
 	{
-		exit(EXIT_SUCCESS);
+		perror("Error processing fork.\n");
+		exit(EXIT_FAILURE);
 	}
-
-	if (strcmp(command, "env") == 0)
+	else if (child_pid == 0)
 	{
-		char *env_var = getenv("PATH");
+		char *args[100];
+		int arg_count = 0;
 
-		if (env_var != NULL)
-		{
-			printf("PATH = %s\n", env_var);
-		}
-		return;
-	}
+		char *token;
+		token = strtok((char *)command, " ");
 
-	while (token != NULL)
-	{
-		args[arg_count++] = token;
-		token = strtok(NULL, " ");
-	}
-	args[arg_count] = NULL;
+		while (token != NULL)
+		{
+			args[arg_count++] = token;
+			token = strtok(NULL, " ");
+		}
+		args[arg_count] = NULL;
 
-	if (access(args[0], X_OK) != -1)
-	{
-		pid_t pid = fork();
+		execvp(args[0], args);
 
-		if (pid == 0)
-		{
-			execvp(args[0], args);
-			perror("Error executing command");
-			exit(EXIT_FAILURE);
-		}
-		else if (pid < 0)
-		{
-			perror("Fork failed");
-		}
-		else
-		{
-			int status;
-			wait(&status);
-		}
+		perror("./shell");
+		exit(EXIT_FAILURE);
 	}
 	else
 	{
-		printf("./shell: No such file or directory\n");
+		wait(0);
+	}	
+}
+
+/**
+ * printEnvironment - funtion prints environment.
+ */
+extern char **environ;
+char command[100];
+
+void printEnvironment()
+{
+	if (strcmp(command, "env") == 0)
+	{
+		char *env_var;
+		int i = 0;
+
+		while ((env_var = environ[i++]) != NULL)
+		{
+			printf("%s\n", env_var);
+		}
 	}
 }
 
@@ -93,8 +105,15 @@ int main()
 	while (1)
 	{
 		prompt();
-		userInput(command);
-		executeCommand(command);
+		userInput(command, sizeof(command));
+		printEnvironment(command);
+
+		if (strcmp(command, "exit") == 0)
+		{
+			break;
+		}
+
+		execute_Command(command);
 	}
 	return (0);
 }
