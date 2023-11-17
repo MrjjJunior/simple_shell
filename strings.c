@@ -27,14 +27,14 @@ char *_strpbrk(char *s, const char *accept)
 }
 
 /**
- * stringChar - Locates the first occurrence of a character in a string.
+ * _strchar - Locates the first occurrence of a character in a string.
  * @s: Pointer to the string.
  * @c: Character to be located.
  *
  * Return: Pointer to the first occurrence of the character c in the string s,
  *         or NULL if the character is not found.
  */
-char *stringChar(const char *s, char c)
+char *_strchar(const char *s, char c)
 {
 	while (*s != '\0')
 	{
@@ -52,13 +52,13 @@ char *stringChar(const char *s, char c)
 }
 
 /**
- * stringTokenizer - Tokenize a string using specified delimiters
+ * _strtok - Tokenize a string using specified delimiters
  * @str: The string to be tokenized
  * @delimiters: A string containing delimiters
  *
  * Return: A pointer to the next token, or NULL if no more tokens are found
  */
-char *stringTokenizer(char *str, const char *delimiters)
+char *_strtok(char *str, const char *delimiters)
 {
 	static char *rest;
 	char *token = rest;
@@ -74,7 +74,7 @@ char *stringTokenizer(char *str, const char *delimiters)
 		return (NULL);
 	}
 
-	while (*rest != '\0' && stringChar(delimiters, *rest) != NULL)
+	while (*rest != '\0' && _strchar(delimiters, *rest) != NULL)
 	{
 		rest++;
 	}
@@ -97,11 +97,11 @@ char *stringTokenizer(char *str, const char *delimiters)
 }
 
 /**
-* stringLen - function that calculates the length of a string
+* _strlen - function that calculates the length of a string
 * @str: length is to be calculated
 * Return: length of the string
 */
-int stringLen(char *str)
+int _strlen(char *str)
 {
 	char *len = str;
 
@@ -112,13 +112,13 @@ int stringLen(char *str)
 	return (len - str);
 }
 /**
- * stringCat - Concatenates two strings.
+ * _strcat - Concatenates two strings.
  * @destination: The destination string.
  * @src: The source string.
  *
  * Return: Pointer to the resulting string dest.
  */
-char *stringCat(char *destination, char *src)
+char *_strcat(char *destination, char *src)
 {
 	char *ptr = destination;
 
@@ -137,7 +137,7 @@ char *stringCat(char *destination, char *src)
 }
 #include "shell.h"
 /**
- * stringCom - Compares two strings.
+ * _strcmp - Compares two strings.
  * @s1: The first string.
  * @s2: The second string.
  *
@@ -146,7 +146,7 @@ char *stringCat(char *destination, char *src)
  * - a negative value if s1 is less than s2.
  * - a positive value if s1 is greater than s2.
  */
-int stringCom(char *s1, char *s2)
+int _strcmp(char *s1, char *s2)
 {
 	while (*s1 && (*s1 == *s2))
 	{
@@ -157,12 +157,12 @@ int stringCom(char *s1, char *s2)
 }
 
 /**
- * stringCpy - Copying a string
- * dest: Destination input
+ * _strcpy - Copying a string
+ * destestination: Destination input
  * @src: Source Value
  * Return: The poiner to destination
  */
-char *stringCpy(char *destination, char *src)
+char *_strcpy(char *destination, char *src)
 {
 	int i = 0;
 
@@ -183,7 +183,7 @@ char *stringCpy(char *destination, char *src)
  */
 char *_strdup(char *s)
 {
-	size_t len = stringLen(s);
+	size_t len = _strlen(s);
 	char *copy = (char *)malloc(len + 1);
 
 	if (s == NULL)
@@ -195,7 +195,7 @@ char *_strdup(char *s)
 	{
 		return (NULL);
 	}
-	stringCpy(copy, s);
+	_strcpy(copy, s);
 
 	return (copy);
 }

@@ -9,13 +9,13 @@ void showPrompt(void)
 	{
 		char prompt[] = "cisfun$ ";
 
-		write(STDOUT_FILENO, prompt, stringLen(prompt));
+		write(STDOUT_FILENO, prompt, _strlen(prompt));
 		fflush(stdout);
 	}
 }
 
 /**
- * main- shell program
+ * main- simple shell program
  * @argc: argument count..
  * @argv: commandline arguments.
  *
@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 	while (1)
 	{
 		showPrompt();
-		command = readCommand();
+		command = inputCommand();
 
 		if (command == NULL)
 		{

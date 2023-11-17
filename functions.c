@@ -1,16 +1,16 @@
 #include "shell.h"
 /**
- * readCommand -function allow user to input a command and it reads it.
+ * inputCommand - Read a line of text from standard input.
  *
  * Return: A pointer to the dynamically allocated string containing the input
  *         line, or NULL if end-of-file is reached.
  */
-char *readCommand(void)
+char *inputCommand(void)
 {
 	char *command = NULL;
-	size_t commandLen = 0;
+	size_t command_len = 0;
 
-	if (getline(&command, &commandLen, stdin) == -1)
+	if (getline(&command, &command_len, stdin) == -1)
 	{
 		free(command);
 		return (NULL);
@@ -28,38 +28,38 @@ char *readCommand(void)
  */
 char *getPath(char *in)
 {
-	char *path, *pathCp, *pathToken, *filePath;
-	int cmdLen, dirLen;
+	char *path, *path_cp, *path_token, *filePath;
+	int cmd_len, dir_len;
 	struct stat buf;
 
 	path = "/bin:/sbin:/tmp";
 	if (path)
 	{
-		pathCp = _strdup(path);
-		cmdLen = stringLen(in);
+		path_cp = _strdup(path);
+		cmd_len = _strlen(in);
 		filePath = NULL;
-		pathToken = stringTokenizer(pathCp, ":");
-		while (pathToken != NULL)
+		path_token = strtok(path_cp, ":");
+		while (path_token != NULL)
 		{
-			dirLen = stringLen(pathToken);
-			filePath = malloc(cmdLen + dirLen + 2);
-			stringCpy(filePath, pathToken);
-			stringCat(filePath, "/");
-			stringCat(filePath, in);
-			stringCat(filePath, "\0");
+			dir_len = _strlen(path_token);
+			filePath = malloc(cmd_len + dir_len + 2);
+			_strcpy(filePath, path_token);
+			_strcat(filePath, "/");
+			_strcat(filePath, in);
+			_strcat(filePath, "\0");
 			if (stat(filePath, &buf) == 0)
 			{
-				free(pathCp);
+				free(path_cp);
 				return (filePath);
 			}
 			else
 			{
 				free(filePath);
 				filePath = NULL;
-				pathToken = stringTokenizer(NULL, ":");
+				path_token = strtok(NULL, ":");
 			}
 		}
-		free(pathCp);
+		free(path_cp);
 		free(filePath);
 		if (stat(in, &buf) == 0)
 		{
@@ -81,13 +81,13 @@ char *getPath(char *in)
 */
 int splitArgs(char *command, char **args)
 {
-	char *token = stringTokenizer(command, " ");
+	char *token = strtok(command, " ");
 	int arg_count = 0;
 
 	while (token != NULL)
 	{
 		args[arg_count++] = token;
-		token = stringTokenizer(NULL, " ");
+		token = strtok(NULL, " ");
 	}
 	args[arg_count] = NULL;
 
@@ -98,7 +98,7 @@ int splitArgs(char *command, char **args)
 * executeChild - Execute the command in the child process.
 *
 * @args: The arguments to execute.
-* @cmd: The path of the command.
+* @cmd: The full path of the command.
 * @argv0: The name of the calling program for error reporting.
 */
 void executeChild(char **args, char *cmd, char *argv0)
@@ -111,15 +111,15 @@ void executeChild(char **args, char *cmd, char *argv0)
 }
 
 /**
-* executeCommand - Execute a command.
+* executeCommand - Execute a command using fork and execlp.
 *
 * @command: The command to execute.
 * @argv0: The name of the calling program for error reporting.
 */
 void executeCommand(char *command, char *argv0)
 {
-	char *shortCommand = command + _strspn(command, " "), *cmd;
-	int command_length = stringLen(shortCommand);
+	char *shortcommand = command + _strspn(command, " "), *cmd;
+	int command_length = _strlen(shortcommand);
 	pid_t pid = fork();
 
 	if (command_length == 0)
@@ -133,13 +133,13 @@ void executeCommand(char *command, char *argv0)
 	}
 	else if (pid == 0)
 	{
-		char *args[MAX_INPUT_LENGTH], *token = stringTokenizer(shortCommand, " ");
+		char *args[MAX_INPUT_LENGTH], *token = strtok(shortcommand, " ");
 		int arg_count = 0;
 
 		while (token != NULL)
 		{
 			args[arg_count++] = token;
-			token = stringTokenizer(NULL, " ");
+			token = strtok(NULL, " ");
 		}
 		args[arg_count] = NULL;
 		cmd = getPath(args[0]);
