@@ -36,17 +36,17 @@ char *getPath(char *in)
 	if (path)
 	{
 		pathCp = _strdup(path);
-		cmdLen = _strlen(in);
+		cmdLen = stringLen(in);
 		filePath = NULL;
-		pathToken = strtok(pathCp, ":");
+		pathToken = stringTokenizer(pathCp, ":");
 		while (pathToken != NULL)
 		{
-			dirLen = _strlen(pathToken);
+			dirLen = stringLen(pathToken);
 			filePath = malloc(cmdLen + dirLen + 2);
-			_strcpy(filePath, pathToken);
-			_strcat(filePath, "/");
-			_strcat(filePath, in);
-			_strcat(filePath, "\0");
+			stringCpy(filePath, pathToken);
+			stringCat(filePath, "/");
+			stringCat(filePath, in);
+			stringCat(filePath, "\0");
 			if (stat(filePath, &buf) == 0)
 			{
 				free(pathCp);
@@ -56,7 +56,7 @@ char *getPath(char *in)
 			{
 				free(filePath);
 				filePath = NULL;
-				pathToken = strtok(NULL, ":");
+				pathToken = stringTokenizer(NULL, ":");
 			}
 		}
 		free(pathCp);
@@ -81,13 +81,13 @@ char *getPath(char *in)
 */
 int splitArgs(char *command, char **args)
 {
-	char *token = strtok(command, " ");
+	char *token = stringTokenizer(command, " ");
 	int arg_count = 0;
 
 	while (token != NULL)
 	{
 		args[arg_count++] = token;
-		token = strtok(NULL, " ");
+		token = stringTokenizer(NULL, " ");
 	}
 	args[arg_count] = NULL;
 
@@ -119,7 +119,7 @@ void executeChild(char **args, char *cmd, char *argv0)
 void executeCommand(char *command, char *argv0)
 {
 	char *shortCommand = command + _strspn(command, " "), *cmd;
-	int command_length = _strlen(shortCommand);
+	int command_length = stringLen(shortCommand);
 	pid_t pid = fork();
 
 	if (command_length == 0)
@@ -133,13 +133,13 @@ void executeCommand(char *command, char *argv0)
 	}
 	else if (pid == 0)
 	{
-		char *args[MAX_INPUT_LENGTH], *token = strtok(shortCommand, " ");
+		char *args[MAX_INPUT_LENGTH], *token = stringTokenizer(shortCommand, " ");
 		int arg_count = 0;
 
 		while (token != NULL)
 		{
 			args[arg_count++] = token;
-			token = strtok(NULL, " ");
+			token = stringTokenizer(NULL, " ");
 		}
 		args[arg_count] = NULL;
 		cmd = getPath(args[0]);

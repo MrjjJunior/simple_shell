@@ -9,7 +9,7 @@ void showPrompt(void)
 	{
 		char prompt[] = "cisfun$ ";
 
-		write(STDOUT_FILENO, prompt, _strlen(prompt));
+		write(STDOUT_FILENO, prompt, stringLen(prompt));
 		fflush(stdout);
 	}
 }

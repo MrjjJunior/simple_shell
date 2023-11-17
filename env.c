@@ -6,7 +6,7 @@
  */
 void exitShell(char *command)
 {
-	if (_strcmp(command, "exit") == 0)
+	if (stringCom(command, "exit") == 0)
 	{
 		_exit(EXIT_SUCCESS);
 	}
@@ -20,7 +20,7 @@ void exitShell(char *command)
  */
 void printEnv(char *command)
 {
-	if (_strcmp(command, "env") == 0)
+	if (stringCom(command, "env") == 0)
 	{
 		char **env = environ;
 

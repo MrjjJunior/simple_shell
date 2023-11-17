@@ -21,12 +21,12 @@
 extern char **environ;
 
 char *_strpbrk(char *s, const char *accept);
-char *_strchr(const char *s, char c);
-char *_strtok(char *str, const char *delimiters);
-int _strcmp(char *s1, char *s2);
-int _strlen(char *str);
-char *_strcpy(char *dest, char *src);
-char *_strcat(char *dest, char *src);
+char *stringChar(const char *s, char c);
+char *stringTokenizer(char *str, const char *delimiters);
+int stringCom(char *s1, char *s2);
+int stringLen(char *str);
+char *stringCpy(char *dest, char *src);
+char *stringCat(char *dest, char *src);
 char *_strdup(char *s);
 int _strspn(char *s, char *accept);
 int _strcspn(const char *s, const char *reject);
