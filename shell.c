@@ -1,36 +1,45 @@
 #include "shell.h"
-
+#include "functions.c"
+#include "strings.c"
+#include "env.c"
 /**
- *
+ * showPrompt - Prints the shell prompt.
  */
-void showprompt(void)
+void showPrompt(void)
 {
 	if (isatty(STDIN_FILENO))
 	{
 		char prompt[] = "cisfun$ ";
 
-		write(STDOUT_FILENO, prompt, strlen(prompt));
+		write(STDOUT_FILENO, prompt, _strlen(prompt));
 		fflush(stdout);
 	}
 }
 
 /**
+ * main- shell program
+ * @argc: argument count..
+ * @argv: commandline arguments.
  *
+ * Return: 0
  */
 int main(int argc, char *argv[])
 {
 	char *command = NULL;
 
-	while(1)
-	{
-		showprompt();
+	UNUSED(argc);
 
-		command = readcommand();
+	while (1)
+	{
+		showPrompt();
+		command = readCommand();
 
 		if (command == NULL)
 		{
 			break;
 		}
+		exitShell(command);
+		printEnv(command);
 
 		executeCommand(command, argv[0]);
 		free(command);
