@@ -1,7 +1,5 @@
 #include "shell.h"
-#include "functions.c"
-#include "strings.c"
-#include "env.c"
+
 /**
  * showPrompt - Prints the shell prompt.
  */
